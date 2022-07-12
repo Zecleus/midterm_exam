@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:fake_store/models/api_response.dart';
 import 'package:fake_store/models/cart.dart';
 import 'package:fake_store/models/product.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class ApiService {
@@ -49,7 +50,7 @@ class ApiService {
     });
   }
 
-  Future<void> updateCart(int cartID, int productID) {
+  Future<void> updateCart(int cartID, int productID) async {
     final tempCart = Cart(userId: cartID, date: DateTime.now(), products: [
       {
         'productId': productID,
@@ -65,5 +66,29 @@ class ApiService {
         print(jsonData);
       }
     }).catchError((error) => print(error));
+  }
+
+  Future<dynamic> getAllCategories() async {
+    return http.get(Uri.parse('$baseUrl/products/category')).then((data) {
+      if (data.statusCode == 200) {
+        final jsonData = json.decode(data.body);
+        return jsonData;
+      }
+    }).catchError((err) => print(err));
+  }
+
+  Future<dynamic> getCategory(String category) {
+    return http
+        .get(Uri.parse('$baseUrl/products/category/$category'))
+        .then((data) {
+      final categoryProducts = <Product>[];
+      if (data.statusCode == 200) {
+        final jsonData = json.decode(data.body);
+        for (var item in jsonData) {
+          categoryProducts.add(Product.fromJson(item));
+        }
+      }
+      return categoryProducts;
+    });
   }
 }
