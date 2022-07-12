@@ -35,4 +35,16 @@ class ApiService {
       return products;
     }).catchError((err) => print(err));
   }
+
+  Future<Product> getSingleProduct(int id) async {
+    return http.get(Uri.parse('$baseUrl/products/$id')).then((data) {
+      final result = Product();
+      if (data.statusCode == 200) {
+        final jsonData = json.decode(data.body);
+        final result = Product.fromJson(jsonData);
+        return result;
+      }
+      return result;
+    });
+  }
 }
