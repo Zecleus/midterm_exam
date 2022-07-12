@@ -1,10 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 import '../models/product.dart';
 import '../services/api_service.dart';
 
 class ProductDetailScreen extends StatelessWidget {
   const ProductDetailScreen({Key? key, required this.id}) : super(key: key);
+  ApiService get service => GetIt.instance<ApiService>();
+
+  final int id;
+
+  Future<Product> getProduct(id) async {
+    final product = await service.getSingleProduct(id);
+    return product;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,13 +49,13 @@ class ProductDetailScreen extends StatelessWidget {
                 children: [
                   const SizedBox(height: 30),
                   Image.network(
-                    '[image]',
+                    product.image!,
                     height: 200,
                     width: double.infinity,
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    '\$$price',
+                    '\$${product.price}',
                     style: const TextStyle(
                       fontSize: 25,
                       fontWeight: FontWeight.bold,
@@ -54,14 +63,14 @@ class ProductDetailScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    product.title,
+                    product.title!,
                     style: const TextStyle(
                       fontSize: 25,
                     ),
                   ),
                   Chip(
                     label: Text(
-                      '[category]',
+                      product.category!,
                       style: const TextStyle(
                         fontSize: 15,
                         color: Colors.white,
@@ -70,7 +79,7 @@ class ProductDetailScreen extends StatelessWidget {
                     backgroundColor: Colors.blueGrey,
                   ),
                   const SizedBox(height: 30),
-                  Text(product.description),
+                  Text(product.description!),
                 ],
               ),
             );
