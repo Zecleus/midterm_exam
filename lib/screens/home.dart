@@ -8,26 +8,15 @@ import 'all_category.dart';
 import 'cart_screen.dart';
 import 'product_detail.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
   ApiService get service => GetIt.instance<ApiService>();
   // APIResponse<List<Product>>? _apiResponse;
 
   Future<List<Product>> getAllProducts() async {
     final productList = await service.getProductList();
     return productList;
-  }
-
-  @override
-  void initState() {
-    getAllProducts();
-    super.initState();
   }
 
   @override
@@ -81,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => ProductDetailScreen(),
+                          builder: (_) => ProductDetailScreen(id: product.id),
                         ),
                       );
                     },
