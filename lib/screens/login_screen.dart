@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
@@ -52,7 +54,7 @@ class LoginScreen extends StatelessWidget {
               height: 60,
               child: ElevatedButton(
                 onPressed: () async {
-                  final getToken = await login(
+                  final getToken = await service.login(
                     nameCtrl.text,
                     passwordCtrl.text,
                   );
