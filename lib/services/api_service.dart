@@ -1,11 +1,11 @@
 // ignore_for_file: invalid_return_type_for_catch_error
 
 import 'dart:convert';
+import 'dart:html';
 
 import 'package:fake_store/models/api_response.dart';
 import 'package:fake_store/models/cart.dart';
 import 'package:fake_store/models/product.dart';
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class ApiService {
@@ -14,14 +14,12 @@ class ApiService {
   Future<dynamic> login(String userN, String pass) {
     return http.post(Uri.parse("$baseUrl/auth/login"),
         body: {'username': userN, 'password': pass}).then((data) {
-      if (data.statusCode == 201) {
+      if (data.statusCode == 200) {
         final jsonData = json.decode(data.body);
 
-        return Future<dynamic>(jsonData);
+        return jsonData;
       }
-      return APIResponse<String>(error: true, errorMessage: 'An error occured');
-    }).catchError((_) =>
-        APIResponse<String>(error: true, errorMessage: 'An error occured'));
+    }).catchError((error) => print(error));
   }
 
   Future<List<Product>> getProductList() async {
@@ -90,5 +88,27 @@ class ApiService {
       }
       return categoryProducts;
     });
+  }
+
+  Future<Cart> getSingleCart(int id) async {
+    return http.get(Uri.parse('$baseUrl/carts/$id')).then((data) {
+      final result = Cart(date: DateTime.now(), products: [], userId: 1);
+      if (data.statusCode == 200) {
+        final jsonData = json.decode(data.body);
+        final result = Cart.fromJson(jsonData);
+        return result;
+      }
+      return result;
+    });
+  }
+
+  Future<void> deleteCart(int id) async {
+    return http.delete(Uri.parse('$baseUrl/carts/$id')).then((data) {
+      if (data.statusCode == 200) {
+        final jsonData = json.decode(data.body);
+        print(data.statusCode);
+        print(jsonData);
+      }
+    }).catchError((err) => print(err));
   }
 }

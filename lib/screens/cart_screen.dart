@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 import '../models/cart.dart';
 import '../models/product.dart';
@@ -6,6 +7,21 @@ import '../services/api_service.dart';
 
 class CartScreen extends StatelessWidget {
   const CartScreen({Key? key}) : super(key: key);
+  ApiService get service => GetIt.instance<ApiService>();
+
+  Future<Cart> getCart(id) async {
+    final cart = await service.getSingleCart(id);
+    return cart;
+  }
+
+  Future<Product> getProduct(id) async {
+    final product = await service.getSingleProduct(id);
+    return product;
+  }
+
+  deleteCart(id) async {
+    await service.deleteCart(id);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,14 +64,12 @@ class CartScreen extends StatelessWidget {
                   }
 
                   return ListTile(
-                    title: Text(p.title),
+                    title: Text(p.title!),
                     leading: Image.network(
-                      '[image]',
+                      p.image!,
                       height: 40,
                     ),
-                    subtitle: Text(
-                      'Quantity: '[$quantity]',
-                    ),
+                    subtitle: Text('Quantity: [${product.quantity}]'),
                     trailing: IconButton(
                       icon: const Icon(Icons.delete, color: Colors.red),
                       onPressed: () async {
