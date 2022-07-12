@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:fake_store/models/api_response.dart';
+import 'package:fake_store/models/cart.dart';
 import 'package:fake_store/models/product.dart';
 import 'package:http/http.dart' as http;
 
@@ -46,5 +47,23 @@ class ApiService {
       }
       return result;
     });
+  }
+
+  Future<void> updateCart(int cartID, int productID) {
+    final tempCart = Cart(userId: cartID, date: DateTime.now(), products: [
+      {
+        'productId': productID,
+        'quantity': 1,
+      }
+    ]);
+
+    return http
+        .put(Uri.parse('$baseUrl/carts/$cartID'), body: json.encode(tempCart))
+        .then((data) {
+      if (data.statusCode == 200) {
+        final jsonData = json.decode(data.body);
+        print(jsonData);
+      }
+    }).catchError((error) => print(error));
   }
 }

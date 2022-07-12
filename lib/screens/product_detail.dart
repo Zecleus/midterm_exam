@@ -1,3 +1,4 @@
+import 'package:fake_store/models/cart.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
@@ -13,6 +14,10 @@ class ProductDetailScreen extends StatelessWidget {
   Future<Product> getProduct(id) async {
     final product = await service.getSingleProduct(id);
     return product;
+  }
+
+  updateCart(cartID, productID) async {
+    await service.updateCart(cartID, productID);
   }
 
   @override
