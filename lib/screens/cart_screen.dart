@@ -9,20 +9,6 @@ class CartScreen extends StatelessWidget {
   const CartScreen({Key? key}) : super(key: key);
   ApiService get service => GetIt.instance<ApiService>();
 
-  Future<Cart> getCart(id) async {
-    final cart = await service.getSingleCart(id);
-    return cart;
-  }
-
-  Future<Product> getProduct(id) async {
-    final product = await service.getSingleProduct(id);
-    return product;
-  }
-
-  deleteCart(id) async {
-    await service.deleteCart(id);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,7 +18,7 @@ class CartScreen extends StatelessWidget {
         backgroundColor: Colors.red,
       ),
       body: FutureBuilder(
-        future: getCart('1'),
+        future: service.getSingleCart(1),
         builder: (BuildContext context, AsyncSnapshot<Cart?> cartSnapshot) {
           if (!cartSnapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
@@ -51,7 +37,7 @@ class CartScreen extends StatelessWidget {
             itemBuilder: (_, index) {
               final product = products[index];
               return FutureBuilder(
-                future: getProduct(product.productId),
+                future: service.getSingleProduct(product['productId']),
                 builder: (BuildContext context,
                     AsyncSnapshot<Product?> productSnapshot) {
                   if (!productSnapshot.hasData) {
@@ -69,11 +55,11 @@ class CartScreen extends StatelessWidget {
                       p.image!,
                       height: 40,
                     ),
-                    subtitle: Text('Quantity: [${product.quantity}]'),
+                    subtitle: Text('Quantity: [${product['quantity']}]'),
                     trailing: IconButton(
                       icon: const Icon(Icons.delete, color: Colors.red),
                       onPressed: () async {
-                        await deleteCart('1');
+                        await service.deleteCart(1);
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text('Cart deleted successfully.'),
