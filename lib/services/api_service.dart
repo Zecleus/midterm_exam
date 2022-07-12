@@ -1,13 +1,16 @@
+// ignore_for_file: invalid_return_type_for_catch_error
+
 import 'dart:convert';
 
 import 'package:fake_store/models/api_response.dart';
+import 'package:fake_store/models/product.dart';
 import 'package:http/http.dart' as http;
 
 class ApiService {
   static const String baseUrl = 'https://fakestoreapi.com';
 
   Future<dynamic> login(String userN, String pass) {
-    return http.post(Uri.parse(baseUrl + "/auth/login"),
+    return http.post(Uri.parse("$baseUrl/auth/login"),
         body: {'username': userN, 'password': pass}).then((data) {
       if (data.statusCode == 201) {
         final jsonData = json.decode(data.body);
@@ -17,5 +20,19 @@ class ApiService {
       return APIResponse<String>(error: true, errorMessage: 'An error occured');
     }).catchError((_) =>
         APIResponse<String>(error: true, errorMessage: 'An error occured'));
+  }
+
+  Future<List<Product>> getProductList() async {
+    return http.get(Uri.parse("$baseUrl/products")).then((data) {
+      final products = <Product>[];
+      if (data.statusCode == 200) {
+        final jsonData = json.decode(data.body);
+
+        for (var item in jsonData) {
+          products.add(Product.fromJson(item));
+        }
+      }
+      return products;
+    }).catchError((err) => print(err));
   }
 }

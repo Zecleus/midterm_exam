@@ -1,4 +1,6 @@
+import 'package:fake_store/models/api_response.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 import '../models/product.dart';
 import '../services/api_service.dart';
@@ -6,8 +8,27 @@ import 'all_category.dart';
 import 'cart_screen.dart';
 import 'product_detail.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  ApiService get service => GetIt.instance<ApiService>();
+  // APIResponse<List<Product>>? _apiResponse;
+
+  Future<List<Product>> getAllProducts() async {
+    final productList = await service.getProductList();
+    return productList;
+  }
+
+  @override
+  void initState() {
+    getAllProducts();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,13 +70,13 @@ class HomeScreen extends StatelessWidget {
                 itemBuilder: ((context, index) {
                   final product = snapshot.data![index];
                   return ListTile(
-                    title: Text('[title]'),
+                    title: Text(product.title!),
                     leading: Image.network(
-                      '[image]',
+                      product.image!,
                       height: 50,
                       width: 50,
                     ),
-                    subtitle: Text('\$price}'),
+                    subtitle: Text('\$${product.price}'),
                     onTap: () {
                       Navigator.push(
                         context,
